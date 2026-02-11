@@ -163,7 +163,6 @@ public final class Main extends JavaPlugin {
         String mcVersion = MinecraftVersion.getVersion();
 
         LogUtils.debugHigh("Versão do servidor Minecraft detectada: " + Bukkit.getVersion());
-        LogUtils.debugHigh("Versão do pacote NMS: " + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
 
         String timeFormat = String.format("%.1f", durationSeconds);
         Bukkit.getConsoleSender().sendMessage(colorize("&8[&2hLiga&8] &aAtivado v" + version + " &7(" + timeFormat + "s)"));
@@ -198,8 +197,7 @@ public final class Main extends JavaPlugin {
 
 
         String version = getDescription().getVersion();
-        String mcVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        LogUtils.debug("Desativando hLiga v" + version + " (NMS: " + mcVersion + ")");
+        LogUtils.debug("Desativando hLiga v" + version);
         Bukkit.getConsoleSender().sendMessage(colorize("&8[&2hLiga&8] &cDesativado v" + version));
     }
 

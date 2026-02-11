@@ -8,8 +8,24 @@ version = '1.0.0'
 description = 'Sistema de ligas de clãs com temporadas e premiações'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.fork = true
+    options.forkOptions.jvmArgs += [
+        '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+        '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+    ]
 }
 
 repositories {
@@ -28,9 +44,9 @@ repositories {
 
 dependencies {
     implementation files('libs/LeafPlugins.jar')
-    compileOnly 'org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT'
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
     compileOnly 'com.github.RoinujNosde:SimpleClans:2.15.0'
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'net.citizensnpcs:citizensapi:2.0.30-SNAPSHOT'
@@ -40,6 +56,12 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'com.zaxxer:HikariCP:4.0.3'
     implementation 'redis.clients:jedis:4.4.3'
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.projectlombok:lombok:1.18.36'
+    }
 }
 
 processResources {
