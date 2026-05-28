@@ -372,8 +372,14 @@ public class VersionUtils {
         }
         
         
-        if (majorVersion > 1 || (majorVersion == 1 && minorVersion > 21) || 
-           (majorVersion == 1 && minorVersion == 21 && patchVersion > 5)) {
+        boolean isSupported = false;
+        if (majorVersion == 1 && minorVersion >= 8 && minorVersion <= 21) {
+            isSupported = true;
+        } else if (majorVersion == 26 && minorVersion == 1 && patchVersion <= 2) {
+            isSupported = true;
+        }
+        
+        if (!isSupported) {
             LogUtils.warning("Versão " + getMinecraftVersion() + " pode não ser totalmente suportada");
         }
         

@@ -163,14 +163,15 @@ public class NPCManager {
             
             List<NPC> npcsToRemove = new ArrayList<>();
             for (NPC existingNPC : registry) {
-                if (npcName.equals(existingNPC.getName())) {
+                String existingId = existingNPC.data().get("hliga_id");
+                if (id.equals(existingId) || npcName.equals(existingNPC.getName())) {
                     npcsToRemove.add(existingNPC);
                 }
             }
             
             
             for (NPC npcToRemove : npcsToRemove) {
-                LogUtils.warn("NPC com nome " + npcName + " já existe, removendo");
+                LogUtils.warn("NPC com ID " + id + " (nome: " + npcName + ") já existe, removendo");
                 try {
                     npcToRemove.despawn();
                     npcToRemove.destroy();
@@ -187,6 +188,7 @@ public class NPCManager {
             }
             
             
+            npc.data().set("hliga_id", id);
             npc.data().set("nameplate-visible", false);
             npc.data().set("always-use-name-hologram", false);
             npc.data().set("use-name-hologram", false);
@@ -988,42 +990,44 @@ public class NPCManager {
             
             NPCRegistry registry = CitizensAPI.getNPCRegistry();
             String npcName = "hLiga_" + id;
+            List<NPC> toRemove = new ArrayList<>();
             
             
             if (npcIds.containsKey(id)) {
                 Integer citizensId = npcIds.get(id);
                 NPC npc = registry.getById(citizensId);
-                if (npc != null) {
-                    Location npcLocation = npc.getStoredLocation();
-                    npc.despawn();
-                    npc.destroy();
-                    npcIds.remove(id);
-                    
-                    
-                    if (npcLocation != null) {
-                        removeHologram(id);
-                    }
-                    
-                    LogUtils.debug("NPC físico " + id + " e hologramas removidos (Citizens ID: " + citizensId + ")");
-                    return true;
+                if (npc != null && !toRemove.contains(npc)) {
+                    toRemove.add(npc);
                 }
             }
             
             
             for (NPC npc : registry) {
-                if (npcName.equals(npc.getName())) {
-                    Location npcLocation = npc.getStoredLocation();
-                    npc.despawn();
-                    npc.destroy();
-                    
-                    
-                    if (npcLocation != null) {
-                        removeHologram(id);
+                String hligaId = npc.data().get("hliga_id");
+                if (id.equals(hligaId) || npcName.equals(npc.getName())) {
+                    if (!toRemove.contains(npc)) {
+                        toRemove.add(npc);
                     }
-                    
-                    LogUtils.debug("NPC físico " + id + " e hologramas removidos por busca de nome");
-                    return true;
                 }
+            }
+            
+            
+            if (!toRemove.isEmpty()) {
+                for (NPC npc : toRemove) {
+                    try {
+                        npc.despawn();
+                        npc.destroy();
+                    } catch (Exception e) {
+                        LogUtils.debug("Erro ao despawnar/destruir NPC " + id + ": " + e.getMessage());
+                    }
+                }
+                
+                
+                removeHologram(id);
+                npcIds.remove(id);
+                
+                LogUtils.debug("NPC físico " + id + " e seus hologramas foram removidos com sucesso. Total removido: " + toRemove.size());
+                return true;
             }
             
             LogUtils.warn("NPC físico " + id + " não encontrado para remoção");
@@ -1316,7 +1320,7 @@ public class NPCManager {
             
             
             for (NPC npc : registry) {
-                if (npc.getName().startsWith("hLiga_")) {
+                if (npc.data().has("hliga_id") || npc.getName().startsWith("hLiga_")) {
                     npcsToRemove.add(npc);
                 }
             }
@@ -1375,7 +1379,7 @@ public class NPCManager {
             List<NPC> toRemove = new ArrayList<>();
             
             for (NPC npc : registry) {
-                if (npc.getName().startsWith("hLiga_")) {
+                if (npc.data().has("hliga_id") || npc.getName().startsWith("hLiga_")) {
                     toRemove.add(npc);
                 }
             }
@@ -1615,6 +1619,8 @@ public class NPCManager {
             
             NPCRegistry registry = CitizensAPI.getNPCRegistry();
             NPC newNpc = registry.createNPC(EntityType.PLAYER, "hLiga_" + npcId);
+            newNpc.data().set("hliga_id", npcId);
+            ensureNPCNonPersistent(newNpc);
             
             
             if (!skinValue.isEmpty() && !skinSignature.isEmpty()) {

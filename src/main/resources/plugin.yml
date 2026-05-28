@@ -7,7 +7,7 @@ depend:
   - LeafPlugins
 softdepend: [SimpleClans, PlaceholderAPI, HolographicDisplays, DecentHolograms]
 authors: [hPlugins and Hokase]
-description: Sistema de ligas compatível com Minecraft 1.8-1.21.x e Java 21+
+description: Sistema de ligas compatível com Minecraft 1.8-1.21.x, 26.1.2 e Java 21+
 website: https://github.com/hplugins/hLiga
 folia-supported: true
 
